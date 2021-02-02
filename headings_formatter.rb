@@ -8,7 +8,7 @@ data = [
   {id: 5, title: "heading5", heading_level: 4},
   {id: 6, title: "heading1", heading_level: 6},
   {id: 6, title: "heading1", heading_level: 6},
-  {id: 6, title: "heading9", heading_level: 6},
+  {id: 6, title: "heading9", heading_level: 2},
   {id: 6, title: "heading1", heading_level: 6},
   {id: 6, title: "heading15", heading_level: 6},
   {id: 5, title: "heading1", heading_level: 4},
@@ -37,6 +37,17 @@ def increment_level(level)
   end
 end
 
+#validation of heading data - returns true / false
+def validate_heading(heading)
+  if !heading[:heading_level].is_a?(Integer)
+    return false
+  end
+  if heading[:heading_level] < 0
+    return false
+  end
+  return true
+end
+
 #html file begining and end
 html_file_header = "<html><head></head><body>"
 html_file_footer = "</body></html>"
@@ -47,8 +58,9 @@ begin
   formatted_file.puts html_file_header
   data.each do |heading|
     # ensure that level is >= 0
-    heading[:heading_level] = heading[:heading_level] >= 0 ? heading[:heading_level] : 0
-
+    unless validate_heading(heading)
+      next
+    end
     increment_level(heading[:heading_level])
     heading[:counter] = @last_heading_counter[0..heading[:heading_level]].join(".")
 
@@ -58,7 +70,6 @@ begin
     formatted_file.puts heading[:counter]
     formatted_file.puts heading[:title]
     formatted_file.puts "</h4>"
-
   end
 
   formatted_file.puts html_file_footer
